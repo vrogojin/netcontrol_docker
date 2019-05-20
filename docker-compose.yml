@@ -1,0 +1,36 @@
+version: '2'
+services:
+ pgdb:
+#  build: ./db_build
+  image: moksiskaan-anduril
+ 
+ backend:
+  depends_on: 
+   - pgdb
+  build: ./backend_build
+  volumes:
+#   - shared_keys:/usr/share/shared_keys
+   - /usr/share/shared_keys
+   - ./netcontrol_backend:/home/net_control
+
+ frontend:
+  build: ./frontend_build
+  links:
+   - backend:backend
+  ports:
+   - 80:80
+  volumes:
+#   - shared_keys:/usr/share/shared_keys
+   - ./netcontrol_frontend:/var/www/html/net_control
+  volumes_from:
+   - backend
+
+ phppgadmin:
+  image: lunyuan/phppgadmin
+  links:
+   - backend:db
+  ports:
+   - 81:80
+
+#volumes:
+# shared_keys: {}
